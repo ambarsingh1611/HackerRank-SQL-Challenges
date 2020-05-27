@@ -1,0 +1,13 @@
+SELECT C.PK AS ClaimID
+	, C.NewValue AS CurrentExaminer
+	, LastAssigned.LastAssignedDate AS AssignedDate
+FROM (
+SELECT PK, MAX(EntryDate) as LastAssignedDate
+FROM ClaimLog
+WHERE FieldName = 'ExaminerCode'
+GROUP BY PK
+) LastAssigned
+INNER JOIN ClaimLog C ON C.PK = LastAssigned.PK
+WHERE LastAssigned.LastAssignedDate = C.EntryDate
+	AND FieldName = 'ExaminerCode'
+ORDER BY C.PK
